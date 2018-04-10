@@ -45,6 +45,7 @@ public class initial {
             data.setClassIndex(data.numAttributes()-1); // class indexi belirleniyor
             
             
+            
         } catch (Exception ex) {
             ex.printStackTrace();
         }
