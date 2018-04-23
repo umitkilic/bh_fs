@@ -5,7 +5,9 @@
  */
 package bh_fs;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
@@ -16,22 +18,37 @@ import weka.core.converters.ConverterUtils;
  */
 public class initial {
     
-    public void createStarPopulation(){
-        Instances data;
-        Random  rand = new Random();
+    public List<StarsPOJO> createStarPopulation(){
+        Instances       data;
+        Random          rand = new Random(1);
         data=this.ReadData();
-        int numofattr=data.numAttributes()-1;
-        int starPopulation[][]=new int[numofattr][numofattr];
-        double  n=0.0;
-        double MR=0.5;
+        int             numofattr=data.numAttributes()-1;
+        StarsPOJO       star=new StarsPOJO();
+        int             star_array[]=new int[numofattr];
+        double          n=0.0;
+        double          MR=0.5;
+        List<StarsPOJO> stars=new ArrayList<>();
         
         
         for (int i = 0; i < numofattr; i++) {
-            n = rand.nextDouble();
-            if (n>MR) {
-                
+            for (int j = 0; j < numofattr; j++) {
+                n = rand.nextDouble();
+                if (n<MR) {
+                    star_array[j]=1;
+                }
             }
+            boolean e=this.existence(stars, star_array);
+            System.out.println("e:"+e);
+            if (!e) {
+                star.setStar(star_array);
+                stars.add(star);
+            }else{
+                i--;
+            }
+            
         }
+        
+        return stars;
     }
     
     public Instances ReadData(){
@@ -53,16 +70,10 @@ public class initial {
         return data;
     }
     
-    public boolean existence(int[][] pop,int[] star){
+    public boolean existence(List<StarsPOJO> stars,int[] star){
         boolean exist=false;
-        int a[]=new int[pop[0].length];
-        
-        for (int i = 0; i < pop.length; i++) {
-            for (int j = 0; j < pop[0].length; j++) {
-                a[j]=pop[i][j];
-            }
-            
-            exist=Arrays.equals(a, star);
+        for (int i = 0; i < stars.size(); i++) {
+            exist=Arrays.equals(stars.get(i).getStar(), star);
             if (exist) {
                 break;
             }
