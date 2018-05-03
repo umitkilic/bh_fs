@@ -21,15 +21,65 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        
+        String              pathname="glass.arff";
+        int                 foldnumber=10;
+        int                 iteration=2;
+        double              MR=0.5;
         List<StarsPOJO>     stars=new ArrayList<>();
         initial             in=new initial();
+        getFitnessValue     gfv=new getFitnessValue();
+        Functions           functions=new Functions();
+        StarsPOJO           star;
         
         
-        stars=in.createStarPopulation();
-        
+        stars=in.createStarPopulation(pathname,MR,foldnumber); // starlar oluşturuluyor
+        int blackholeindex=0;
+       
         for (int i = 0; i < stars.size(); i++) {
-            System.out.println("gelen:"+ Arrays.toString(stars.get(i).getStar()));
+            System.out.println("gelen:"+ Arrays.toString(stars.get(i).getStar())+" fitness:"+stars.get(i).getFitnessVal()+" numof1:"+stars.get(i).getNumberof1s());
+        }
+        blackholeindex=functions.findBlackHole(stars);
+        System.out.println("BlackHole index:"+blackholeindex);
+        int it_counter=0;
+        double R;
+        while(it_counter<iteration){
+            
+            for (int i = 0; i < stars.size(); i++) {
+                if (stars.get(i).getFitnessVal()>stars.get(blackholeindex).getFitnessVal()) {
+                    blackholeindex=i;
+                }else if((stars.get(i).getFitnessVal()==stars.get(blackholeindex).getFitnessVal()) && (stars.get(i).getNumberof1s()<stars.get(blackholeindex).getNumberof1s())){
+                    blackholeindex=i;
+                }
+                R=stars.get(blackholeindex).getFitnessVal()/functions.getTotalFitness(stars);
+                System.out.println("R:"+R);
+                
+                if (Math.sqrt(Math.pow(stars.get(blackholeindex).getFitnessVal()-stars.get(i).getFitnessVal(), 2))<R && i!=blackholeindex) {
+                    star=new StarsPOJO();
+                    star=in.createOneStar(stars, pathname, MR,foldnumber);
+                    stars.remove(i);
+                    stars.add(i, star);
+                    System.out.println(i+". kaldırıldı. Yeni olusturulup eklenen:"+Arrays.toString(star.getStar())+" fit:"+star.getFitnessVal()+" num1:"+star.getNumberof1s());
+                }
+                
+                for (int k = 0; k < stars.size(); k++) {
+                System.out.println("for gelen:"+ Arrays.toString(stars.get(k).getStar())+" fitness:"+stars.get(k).getFitnessVal()+" numof1:"+stars.get(k).getNumberof1s());
+                }
+            }
+            System.out.println("part2.");
+            for (int i = 0; i < stars.size(); i++) {
+                double Xnew[]=new double[stars.size()];
+                int Xnew1[]=new int[stars.size()];
+                int Xold[]=stars.get(i).getStar().clone();
+                int Xbh[]=stars.get(blackholeindex).getStar().clone();
+                for (int j = 0; j < stars.size(); j++) {
+                    Xnew[j]=Xold[j]+0.6*(Xbh[j]-Xold[j]);
+                    
+                    if (Math.abs(Math.tanh(Xnew[j]))>0.6) {
+                        Xnew1[j]=1;
+                    }
+                }
+            }
+            it_counter++;
         }
     }
     

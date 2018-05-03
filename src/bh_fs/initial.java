@@ -18,45 +18,62 @@ import weka.core.converters.ConverterUtils;
  */
 public class initial {
     
-    public List<StarsPOJO> createStarPopulation(){
+    
+    public List<StarsPOJO> createStarPopulation(String pathname,double MR,int foldnumber){
         Instances       data;
-        Random          rand = new Random(1);
-        data=this.ReadData();
-        int             numofattr=data.numAttributes()-1;
-        StarsPOJO       star=new StarsPOJO();
-        int             star_array[]=new int[numofattr];
-        double          n=0.0;
-        double          MR=0.5;
+        StarsPOJO       star;
         List<StarsPOJO> stars=new ArrayList<>();
-        
+        data=this.ReadData(pathname);
+        int             numofattr=data.numAttributes()-1;
+        double          n=0.0;
         
         for (int i = 0; i < numofattr; i++) {
+            star=new StarsPOJO();
+            star=createOneStar(stars, pathname, MR, foldnumber);
+            stars.add(star);
+        }
+        
+        return stars;
+    }
+    
+    public StarsPOJO createOneStar(List<StarsPOJO> stars,String pathname,double MR,int foldnumber){
+        Instances       data;
+        Random          rand = new Random(1);
+        data=this.ReadData(pathname);
+        double          n=0.0;
+        int             numofattr=data.numAttributes()-1;
+        StarsPOJO       star=new StarsPOJO();
+        boolean         e=true;
+        while(e){
+            int star_array[]=new int[numofattr];
             for (int j = 0; j < numofattr; j++) {
                 n = rand.nextDouble();
                 if (n<MR) {
                     star_array[j]=1;
                 }
             }
-            boolean e=this.existence(stars, star_array);
-            System.out.println("e:"+e);
+            e=existence(stars, star_array);
+
             if (!e) {
+                star=new StarsPOJO();
                 star.setStar(star_array);
-                stars.add(star);
+                star.setNumberof1s(numberof1s(star_array));
+                getFitnessValue gfv=new getFitnessValue();
+                star.setFitnessVal(gfv.getFitnessOneByOne(star_array, foldnumber, pathname));
             }else{
-                i--;
+
             }
-            
         }
         
-        return stars;
+        return star;
     }
     
-    public Instances ReadData(){
+    public Instances ReadData(String pathname){
         ConverterUtils.DataSource   source;
         Instances                   data=null;
         
         try {
-            String path="glass.arff";
+            String path=pathname;
             source=new ConverterUtils.DataSource(path);
             data=source.getDataSet();
             data.setClassIndex(data.numAttributes()-1); // class indexi belirleniyor
@@ -80,5 +97,13 @@ public class initial {
         }
         
         return exist;
+    }
+    
+    public int numberof1s(int[] s){
+        int t=0;
+        for (int i = 0; i < s.length; i++) {
+            t=t+s[i];
+        }
+        return t;
     }
 }
