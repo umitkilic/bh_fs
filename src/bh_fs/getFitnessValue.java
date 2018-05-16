@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.lazy.IBk;
 import weka.core.Instances;
 
@@ -28,6 +29,7 @@ public class getFitnessValue {
         Instances data1=data;
         
         try {
+            //classifier=new NaiveBayes();
             classifier=new IBk(3); // sınıflandırıcı oluşturuldu
             data=this.deleteZeros(star, N, data);
             eval=new Evaluation(data); // degerlendirici olusturuldu

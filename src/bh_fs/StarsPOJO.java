@@ -16,6 +16,7 @@ public class StarsPOJO {
     private int numberof1s;
     
     public StarsPOJO() {
+        this.fitnessVal=0.0;
     }
 
     public int[] getStar() {

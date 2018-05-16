@@ -24,10 +24,9 @@ public class Main {
         String              pathname="glass.arff";
         int                 foldnumber=10;
         int                 iteration=2;
-        double              MR=0.5;
+        double              MR=0.3;
         List<StarsPOJO>     stars=new ArrayList<>();
         initial             in=new initial();
-        getFitnessValue     gfv=new getFitnessValue();
         Functions           functions=new Functions();
         StarsPOJO           star;
         
@@ -36,15 +35,19 @@ public class Main {
         int blackholeindex=0;
        
         for (int i = 0; i < stars.size(); i++) {
-            System.out.println("gelen:"+ Arrays.toString(stars.get(i).getStar())+" fitness:"+stars.get(i).getFitnessVal()+" numof1:"+stars.get(i).getNumberof1s());
+            System.out.println("Başlangıç:"+ Arrays.toString(stars.get(i).getStar())+" fitness:"+stars.get(i).getFitnessVal()+" numof1:"+stars.get(i).getNumberof1s());
         }
-        blackholeindex=functions.findBlackHole(stars);
-        System.out.println("BlackHole index:"+blackholeindex);
+        
         int it_counter=0;
         double R;
         while(it_counter<iteration){
-            
+            blackholeindex=functions.findBlackHole(stars);
+            System.out.println("Seçilen BlackHole index:"+blackholeindex);
+        
             for (int i = 0; i < stars.size(); i++) {
+                if (i==blackholeindex) {
+                    continue;
+                }
                 if (stars.get(i).getFitnessVal()>stars.get(blackholeindex).getFitnessVal()) {
                     blackholeindex=i;
                 }else if((stars.get(i).getFitnessVal()==stars.get(blackholeindex).getFitnessVal()) && (stars.get(i).getNumberof1s()<stars.get(blackholeindex).getNumberof1s())){
@@ -61,12 +64,14 @@ public class Main {
                     System.out.println(i+". kaldırıldı. Yeni olusturulup eklenen:"+Arrays.toString(star.getStar())+" fit:"+star.getFitnessVal()+" num1:"+star.getNumberof1s());
                 }
                 
-                for (int k = 0; k < stars.size(); k++) {
-                System.out.println("for gelen:"+ Arrays.toString(stars.get(k).getStar())+" fitness:"+stars.get(k).getFitnessVal()+" numof1:"+stars.get(k).getNumberof1s());
-                }
             }
-            System.out.println("part2.");
+            
+            for (int k = 0; k < stars.size(); k++) {
+                System.out.println("Stars:"+ Arrays.toString(stars.get(k).getStar())+" fitness:"+stars.get(k).getFitnessVal()+" numof1:"+stars.get(k).getNumberof1s());
+            }
+            
             for (int i = 0; i < stars.size(); i++) {
+                
                 double Xnew[]=new double[stars.size()];
                 int Xnew1[]=new int[stars.size()];
                 int Xold[]=stars.get(i).getStar().clone();
@@ -78,6 +83,17 @@ public class Main {
                         Xnew1[j]=1;
                     }
                 }
+                star=new StarsPOJO();
+                star=in.createOneStarWithArray(stars, pathname, MR, foldnumber, Xnew1);
+                if (star.getFitnessVal()!=0.0) {
+                    stars.remove(i);
+                    stars.add(i,star);
+                }
+                
+            }
+            
+            for (int k = 0; k < stars.size(); k++) {
+                System.out.println("Starss:"+ Arrays.toString(stars.get(k).getStar())+" fitness:"+stars.get(k).getFitnessVal()+" numof1:"+stars.get(k).getNumberof1s());
             }
             it_counter++;
         }

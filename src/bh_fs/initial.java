@@ -25,7 +25,6 @@ public class initial {
         List<StarsPOJO> stars=new ArrayList<>();
         data=this.ReadData(pathname);
         int             numofattr=data.numAttributes()-1;
-        double          n=0.0;
         
         for (int i = 0; i < numofattr; i++) {
             star=new StarsPOJO();
@@ -46,12 +45,21 @@ public class initial {
         boolean         e=true;
         while(e){
             int star_array[]=new int[numofattr];
-            for (int j = 0; j < numofattr; j++) {
-                n = rand.nextDouble();
-                if (n<MR) {
-                    star_array[j]=1;
+            boolean a=true;
+            int t=0;
+            while(a){
+                for (int j = 0; j < numofattr; j++) {
+                    n = rand.nextDouble();
+                    if (n<MR) {
+                        star_array[j]=1;
+                    }
+                    t=t+star_array[j];
+                }
+                if(t>0){
+                    a=false;
                 }
             }
+            
             e=existence(stars, star_array);
 
             if (!e) {
@@ -63,6 +71,23 @@ public class initial {
             }else{
 
             }
+        }
+        
+        return star;
+    }
+    
+    public StarsPOJO createOneStarWithArray(List<StarsPOJO> stars,String pathname,double MR,int foldnumber,int[] array){
+        StarsPOJO       star=new StarsPOJO();
+        boolean         e=true;
+        
+        e=existence(stars, array);
+        
+        if (e) {
+            star=new StarsPOJO();
+            star.setStar(array);
+            star.setNumberof1s(numberof1s(array));
+            getFitnessValue gfv=new getFitnessValue();
+            star.setFitnessVal(gfv.getFitnessOneByOne(array, foldnumber, pathname));
         }
         
         return star;
