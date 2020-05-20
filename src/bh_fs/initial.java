@@ -81,8 +81,8 @@ public class initial {
         boolean         e=true;
         
         e=existence(stars, array);
-        
-        if (e) {
+        System.out.println("existence:"+e);
+        if (!e) {
             star=new StarsPOJO();
             star.setStar(array);
             star.setNumberof1s(numberof1s(array));

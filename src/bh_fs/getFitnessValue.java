@@ -12,6 +12,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.lazy.IBk;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Instances;
 
 /**
@@ -31,6 +32,7 @@ public class getFitnessValue {
         try {
             //classifier=new NaiveBayes();
             classifier=new IBk(3); // sınıflandırıcı oluşturuldu
+            //classifier=new RandomForest();
             data=this.deleteZeros(star, N, data);
             eval=new Evaluation(data); // degerlendirici olusturuldu
             eval.crossValidateModel(classifier, data1, foldnumber, new Random(1));
